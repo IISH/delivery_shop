@@ -18,6 +18,8 @@
 // protype for jquery
 // Taal code in aparte js
 // in cart allen label en remove zichtbaar
+// Pid kan getoond worden
+// Link the cart label naar de search pagina
 
 var DeliveryProps = (function() {
     var host        = "localhost";
@@ -94,7 +96,8 @@ function initDelivery(props)
     simpleCart({
         // array representing the format and columns of the cart
         cartColumns: [
-            { attr: "name",      label: "Pid/Signature"},
+            { attr: "name",     label: "Title"},
+            { attr: "pid",      label: "Pid/Signature"},
             // { attr: "quantity",  label: false},
             { view: "remove",    label: "Remove"}
         ],
@@ -109,7 +112,7 @@ function initDelivery(props)
     });
 } /* initDelivery */
 
-function deliveryInfo(resultfld)
+function getDeliveryInfo(resultfld)
 {
     var html;
     
@@ -119,22 +122,34 @@ function deliveryInfo(resultfld)
     html += "lang=" + DeliveryProps.getLanguage();
     html += "</i>";
     $(resultfld).html(html);
-} /* deliveryInfo */
+} /* getDeliveryInfo */
 
-function determineReservationButton(pid, signature, directflag, resultfld) 
+function determineReservationButton(label, pid, signature, directflag, resultfld) 
 {
-    var pars = { pid: $.trim(pid), signature: $.trim(signature), direct: directflag, field: resultfld, result:  button_callback };
+    var pars = { 
+        label:     label, 
+        pid:       $.trim(pid), 
+        signature: $.trim(signature), 
+        direct:    directflag, 
+        field:     resultfld, 
+        result:    button_callback 
+    };
     get_json_data("GET", "delivery/record/" + encodeURIComponent(pars.pid), pars);
 } /* determineReservationButton */
 
-function getRecordData(pid, signature, resultfld) 
+function getRecordInfo(pid, signature, resultfld) 
 {
-    var pars = { pid: $.trim(pid), signature: $.trim(signature), field: resultfld, result: record_callback };
+    var pars = {
+        pid:       $.trim(pid),
+        signature: $.trim(signature),
+        field:     resultfld,
+        result:    record_callback
+    };
     get_json_data("GET", "delivery/record/" + encodeURIComponent(pars.pid), pars);
     $(resultfld).html("Request: pid=" + pars.pid + " signature=" + pars.signature);
-} /* getRecordData */
+} /* getRecordInfo */
 
-function requestReservation(pid, signature, direct)
+function requestReservation(label, pid, signature, direct)
 {
     var item = pid + ":" + signature;
     
@@ -162,7 +177,8 @@ function requestReservation(pid, signature, direct)
                 else
                 {
                     simpleCart.add({ 
-                        name:     item,
+                        name:     label,
+                        pid:      item,
                         quantity: 1
                     });
                 }
@@ -213,7 +229,7 @@ function button_callback(pars, data, holding)
         // Holding is not found in Delivery
         data = {
             pid:             pars.pid,
-            title:           "",
+            title:           pars.pid,
             restrictionType: 'OPEN',
             holdings: [
                 {
@@ -241,6 +257,15 @@ function button_callback(pars, data, holding)
                     html += "Request Item";
                 }
                 html += "\" name=\"RequestItem\" onclick=\"requestReservation('";
+                if (pars.label === null)
+                {
+                    html += data.title;
+                }
+                else
+                {
+                    html += pars.label;
+                }
+                html += "', '";
                 html += pars.pid;
                 html += "', '";
                 html += pars.signature;

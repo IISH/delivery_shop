@@ -1,0 +1,70 @@
+/* 
+    Document   : delivery_shop
+    Created on : Mar 13, 2013, 4:01:56 PM
+    Author     : geert
+    Description:
+        Purpose of the stylesheet follows.
+*/
+
+/*
+    DeliverySop classes
+*/
+.delivery_reserve_button
+{
+    background-color: lightgreen;
+}
+
+
+/*
+    The simpleCart classes
+*/
+.simpleCart_items
+{
+    background-color: yellow;
+    width: 750px;
+}
+.simpleCart_items .headerRow
+{
+    background-color: lightgray;
+}
+.simpleCart_items .headerRow .item-name
+{
+    font-weight: bold;
+    text-align:  left;
+}
+.simpleCart_items .headerRow .item-pid
+{
+    font-weight: bold;
+    text-align:  center;
+}
+.simpleCart_items .headerRow .item-remove
+{
+    font-weight: bold;
+    font-style:  italic;
+    text-align:  right;
+    /* display:     none; */
+}
+.simpleCart_items .itemRow
+{
+    background-color: lightskyblue;
+}
+.simpleCart_items .itemRow .item-name
+{
+    text-align:  left;
+}
+.simpleCart_items .itemRow .item-remove
+{
+    float:  right;
+}
+.simpleCart_remove
+{
+    background-color: lightsalmon;
+}
+.simpleCart_checkout
+{
+    background-color: lightcyan;
+}
+.simpleCart_empty
+{
+    background-color: lightcyan;
+}

@@ -24,25 +24,25 @@
                     max_items: 3,
                     cart_div:  "#delivery_cart"
                 });
-                deliveryInfo("#delivery_info");     // For debugging
+                getDeliveryInfo("#delivery_info");     // For debugging
                 
                 setButtons();
             });  /* ready */
             
             function setButtons()
             {
-                getRecordData("10622/03D5FEE7-F079-4A5C-A85E-5D22C251933C", "BG C37/328", "#delivery_test1");   // For debugging
-                getRecordData("10622/816FC0F9-C941-46E6-86DB-3A66D253D398", "110/61",     "#delivery_test2");   // For debugging
-                getRecordData("10622/6D8399C0-A2A0-4537-A380-9AE6CF0D05BD", "PM 10546",   "#delivery_test3");   // For debugging                
+                getRecordInfo("10622/03D5FEE7-F079-4A5C-A85E-5D22C251933C", "BG C37/328", "#delivery_test1");   // For debugging
+                getRecordInfo("10622/816FC0F9-C941-46E6-86DB-3A66D253D398", "110/61",     "#delivery_test2");   // For debugging
+                getRecordInfo("10622/6D8399C0-A2A0-4537-A380-9AE6CF0D05BD", "PM 10546",   "#delivery_test3");   // For debugging                
                 
-                determineReservationButton("10622/03D5FEE7-F079-4A5C-A85E-5D22C251933C", "BG C37/328", false, "#delivery_button1");
-                determineReservationButton("10622/816FC0F9-C941-46E6-86DB-3A66D253D398", "110/61",     false, "#delivery_button2");
-                determineReservationButton("10622/6D8399C0-A2A0-4537-A380-9AE6CF0D05BD", "PM 10546",   false, "#delivery_button3");                
+                determineReservationButton("Label1", "10622/03D5FEE7-F079-4A5C-A85E-5D22C251933C", "BG C37/328", false, "#delivery_button1");
+                determineReservationButton("Regel2", "10622/816FC0F9-C941-46E6-86DB-3A66D253D398", "110/61",     false, "#delivery_button2");
+                determineReservationButton(null,  "10622/6D8399C0-A2A0-4537-A380-9AE6CF0D05BD", "PM 10546",   false, "#delivery_button3");                
             } /* setButtons */
             
             function getHolding()
             {
-                getRecordData($("#pid").val(), $("#signature").val(), "#delivery_test4");   // For debugging
+                getRecordInfo($("#pid").val(), $("#signature").val(), "#delivery_test4");   // For debugging
                 
                 determineReservationButton($("#pid").val(), $("#signature").val(), false, "#delivery_button4");
             } /* getHolding */
