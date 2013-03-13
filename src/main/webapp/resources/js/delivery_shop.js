@@ -13,22 +13,83 @@
  *    See the License for the specific language governing permissions and
  *    limitations under the License.
  */
-var delivery_host  = "localhost";
-var delivery_lang  = "en";
-var delivery_email = "ask@iisg.nl";
-var delivery_cart  = null;
-var delivery_max   = 3;
+
+// Todo Stylesheet
+// protype for jquery
+// Taal code in aparte js
+// in cart allen label en remove zichtbaar
+
+var DeliveryProps = (function() {
+    var host        = "localhost";
+    var language    = "en";
+    var email       = "ask@iisg.nl";
+    var max_items   = 3;
+    var cart_div    = null;
+    
+    var set_cartdiv = function(div) {
+        var html;
+    
+        html  = "<div class=\"simpleCart_items\"></div>";
+        // html += "<br />" 
+        // html += "Quantity: <span class=\"simpleCart_quantity\"></span><br />";
+        if (language === 'nl')
+        {
+            html += "<input type=\"submit\" class=\"simpleCart_checkout\" value=\"Reserveer\" name=\"Reserve\" onclick=\"javascript:;\" />";
+            html += "&nbsp;";
+            html += "<input type=\"submit\" class=\"simpleCart_empty\" value=\"Leeg\" name=\"Empty\" onclick=\"javascript:;\" />";
+        }
+        else
+        {
+            html += "<input type=\"submit\" class=\"simpleCart_checkout\" value=\"Reserve\" name=\"Reserve\" onclick=\"javascript:;\" />";
+            html += "&nbsp;";
+            html += "<input type=\"submit\" class=\"simpleCart_empty\" value=\"Empty\" name=\"Empty\" onclick=\"javascript:;\" />";
+        }
+        html += "<br />";
+        $(div).html(html);
+        cart_div = div;
+    }; /* set_cartdiv */
+
+    return {
+        setProperties: function(props) {
+            if (!!props)
+            {
+                if (!!props.host)      host      = props.host;
+                if (!!props.language)  language  = props.language;
+                if (!!props.email)     email     = props.email;
+                if (!!props.max_items) max_items = props.max_items;
+                if (!!props.cart_div)  set_cartdiv(props.cart_div);
+            }
+        },
+        getDeliveryHost: function() {
+            return(host);
+        },
+        getLanguage: function() {
+            return(language);
+        },
+        getOfficeEmail: function() {
+            return(email);
+        },
+        getMaxItems: function() {
+            return(max_items);
+        },
+        getShoppingCartDiv: function() {
+            return(cart_div);
+        }
+    };
+}());
 
 /**
  * Initialize the Delivery API
  *
+ * @param object props     the delivery access properties
  * @return void
  */
-function initDelivery(host, language)
+function initDelivery(props)
 {
-    if (!!host)     delivery_host = host;
-    if (!!language) delivery_lang = language;
-    syslog("Use delivery host: " + delivery_host);
+    jQuery.support.cors = true;
+    
+    if (!!props) DeliveryProps.setProperties(props);
+    syslog("Use delivery host: " + DeliveryProps.getDeliveryHost());
     
     simpleCart({
         // array representing the format and columns of the cart
@@ -44,58 +105,33 @@ function initDelivery(host, language)
             type: "SendForm", 
             url:  "javascript:sendReservation();" 
         },
-        currency: "EUR",
-        // set the cart langauge
-        language: "english-us"
+        currency: "EUR"
     });
 } /* initDelivery */
-
-function setCartDiv(cartdiv)
-{
-    var html;
-    
-    html  = "<div class=\"simpleCart_items\"></div>";
-    // html += "<br />" 
-    // html += "Quantity: <span class=\"simpleCart_quantity\"></span><br />";
-    if (delivery_lang === 'nl')
-    {
-        html += "<input type=\"submit\" class=\"simpleCart_checkout\" value=\"Reserveer\" name=\"Reserve\" onclick=\"javascript:;\" />";
-        html += "&nbsp;";
-        html += "<input type=\"submit\" class=\"simpleCart_empty\" value=\"Leeg\" name=\"Empty\" onclick=\"javascript:;\" />";
-    }
-    else
-    {
-        html += "<input type=\"submit\" class=\"simpleCart_checkout\" value=\"Reserve\" name=\"Reserve\" onclick=\"javascript:;\" />";
-        html += "&nbsp;";
-        html += "<input type=\"submit\" class=\"simpleCart_empty\" value=\"Empty\" name=\"Empty\" onclick=\"javascript:;\" />";
-    }
-    html += "<br />";
-    $(cartdiv).html(html);
-    delivery_cart = cartdiv;
-} /* setCartDiv */
 
 function deliveryInfo(resultfld)
 {
     var html;
     
     html  = "<i>";
-    html += "host=" + delivery_host + " ";
-    html += "lang=" + delivery_lang;
+    html += "host=" + DeliveryProps.getDeliveryHost();
+    html += " ";
+    html += "lang=" + DeliveryProps.getLanguage();
     html += "</i>";
     $(resultfld).html(html);
 } /* deliveryInfo */
 
 function determineReservationButton(pid, signature, directflag, resultfld) 
 {
-    var pars = { 'pid': pid, 'signature': signature, 'direct': directflag, 'field': resultfld, 'result':  button_callback };
-    get_json_data("GET", "delivery/record/" + encodeURIComponent(pid), pars);
+    var pars = { pid: $.trim(pid), signature: $.trim(signature), direct: directflag, field: resultfld, result:  button_callback };
+    get_json_data("GET", "delivery/record/" + encodeURIComponent(pars.pid), pars);
 } /* determineReservationButton */
 
 function getRecordData(pid, signature, resultfld) 
 {
-    var pars = { 'pid': pid, 'signature': signature, 'field': resultfld, 'result': record_callback };
-    get_json_data("GET", "delivery/record/" + encodeURIComponent(pid), pars);
-    $(resultfld).html("Request: pid=" + pid + " signature=" + signature);
+    var pars = { pid: $.trim(pid), signature: $.trim(signature), field: resultfld, result: record_callback };
+    get_json_data("GET", "delivery/record/" + encodeURIComponent(pars.pid), pars);
+    $(resultfld).html("Request: pid=" + pars.pid + " signature=" + pars.signature);
 } /* getRecordData */
 
 function requestReservation(pid, signature, direct)
@@ -108,22 +144,22 @@ function requestReservation(pid, signature, direct)
     }
     else
     {
-        if (delivery_cart !== null)
+        if (DeliveryProps.getShoppingCartDiv() !== null)
         {
-            if (simpleCart.quantity() >= delivery_max)
+            if (simpleCart.find({ name: item }).length === 0)
             {
-                if (delivery_lang === 'nl')
+                if (simpleCart.quantity() >= DeliveryProps.getMaxItems())
                 {
-                    alert("U kunt maximaal " + delivery_max + " objecten reserveren");
+                    if (DeliveryProps.getLanguage() === 'nl')
+                    {
+                        alert("U kunt maximaal " + DeliveryProps.getMaxItems() + " objecten reserveren");
+                    }
+                    else
+                    {
+                        alert("Only a reservation of " + DeliveryProps.getMaxItems() + " holdings kan be made");
+                    }
                 }
                 else
-                {
-                    alert("Only a reservation of " + delivery_max + " holdings kan be made");
-                }
-            }
-            else
-            {
-                if (simpleCart.find({ name: item}).length === 0)
                 {
                     simpleCart.add({ 
                         name:     item,
@@ -149,13 +185,12 @@ function sendReservation()
             if (pids.length > 0) pids += ",";
             pids += item.get('name');
         });
-        // alert("sendReservation " + pids);
         show_delivery_page(pids);
         simpleCart.empty();
     }
     else
     {
-        if (delivery_lang === 'nl')
+        if (DeliveryProps.getLanguage() === 'nl')
         {
             alert("Geen objecten geselecteerd om te reserveren");
         }
@@ -173,6 +208,23 @@ function button_callback(pars, data, holding)
     var html;
     
     syslog("button_callback: field=" + pars.field);
+    if (data === null)
+    {
+        // Holding is not found in Delivery
+        data = {
+            pid:             pars.pid,
+            title:           "",
+            restrictionType: 'OPEN',
+            holdings: [
+                {
+                    signature:        pars.signature,
+                    status:           'AVAILABLE',
+                    usageRestriction: 'OPEN'
+                }  
+            ]
+        }
+        holding = data.holdings[0];
+    }
     if (data.restrictionType === 'OPEN')
     {
         if (holding.usageRestriction === 'OPEN')
@@ -180,7 +232,7 @@ function button_callback(pars, data, holding)
             if (holding.status === 'AVAILABLE')
             {
                 html = "<input type=\"submit\" class=\"delivery_reserve_button\" value=\"";
-                if (delivery_lang === 'nl')
+                if (DeliveryProps.getLanguage() === 'nl')
                 {
                     html += "Reserveer Item";
                 }
@@ -198,7 +250,7 @@ function button_callback(pars, data, holding)
             }
             else
             {
-                if (delivery_lang === 'nl')
+                if (DeliveryProps.getLanguage() === 'nl')
                 {
                     html = "Dit item is op momenteel gereserveerd door iemand anders, neem contact op met de leeskamer ";
                 }
@@ -207,15 +259,15 @@ function button_callback(pars, data, holding)
                     html = "The item is currently reserved by someone else, please contact reading room ";
                 }
                 html += "<a href=\"mailto:";
-                html += delivery_email;
+                html += DeliveryProps.getOfficeEmail();
                 html += "\">";
-                html += delivery_email;
+                html += DeliveryProps.getOfficeEmail();
                 html += "</a>";
             }
         }
         else
         {
-            if (delivery_lang === 'nl')
+            if (DeliveryProps.getLanguage() === 'nl')
             {
                 html = "U kunt dit item niet reserveren i.v.m. beperkingen op dit archief";
             }
@@ -227,7 +279,7 @@ function button_callback(pars, data, holding)
     }
     else if (data.restrictionType === 'RESTRICTED')
     {
-        if (delivery_lang === 'nl')
+        if (DeliveryProps.getLanguage() === 'nl')
         {
             html = "Item is restricted";
         }
@@ -238,7 +290,7 @@ function button_callback(pars, data, holding)
     }
     else // CLOSED
     {
-        if (delivery_lang === 'nl')
+        if (DeliveryProps.getLanguage() === 'nl')
         {
             html = "U kunt dit item niet reserveren i.v.m. beperkingen op dit archief";
         }
@@ -256,12 +308,21 @@ function record_callback(pars, data, holding)
     
     syslog("record_callback: field=" + pars.field);
     rec  = "<i>";
-    rec += "pid=" + data.pid + "<br />";
-    rec += "signature=" + holding.signature + "<br />";
-    rec += "title=" + data.title + "<br />";
-    rec += "restrictionType=" + data.restrictionType + "<br />";
-    rec += "usageRestriction=" + holding.usageRestriction + "<br />";
-    rec += "status=" + holding.status + "<br />";
+    if (data === null)
+    {
+        rec += "pid=" + pars.pid + "<br />";
+        rec += "signature=" + pars.signature + "<br />";
+        rec += "status=NOT_FOUND<br />";
+    }
+    else
+    {
+        rec += "pid=" + data.pid + "<br />";
+        rec += "signature=" + holding.signature + "<br />";
+        rec += "title=" + data.title + "<br />";
+        rec += "restrictionType=" + data.restrictionType + "<br />";
+        rec += "usageRestriction=" + holding.usageRestriction + "<br />";
+        rec += "status=" + holding.status + "<br />";        
+    }
     rec += "</i>";
     $(pars.field).html("Response:<br />" + rec);
 } /* record_callback */
@@ -270,44 +331,55 @@ function show_delivery_page(pids)
 {
     var url;
     
-    url  = "http://" + delivery_host;
+    url  = "http://" + DeliveryProps.getDeliveryHost();
     url += "/delivery/reservation/createform/";
     url += encodeURIComponent(pids);
-    if (delivery_lang !== undefined)
-    {
-        url += "?locale=" + delivery_lang;
-    }
+    url += "?locale=" + DeliveryProps.getLanguage();
     // window.location = url;
     window.open(url);
-} /* requestReservation */
+} /* show_delivery_page */
 
 function get_json_data(reqtype, url, pars)
 {
-    if (delivery_host !== null) url = delivery_host + "/" + url;
+    url = DeliveryProps.getDeliveryHost() + "/" + url;
     syslog("get_json_data: url=" + url + " pars=" + pars);
 
-    jQuery.ajax({
-        type:          reqtype,
-        url:           "http://" + url,
-        dataType:      'jsonp',
-        crossDomain:   true,
-        cache:         true,
-        success:       function(data, stat, xhr) {handle_complete(data, stat, xhr, pars);},
-        error:         function(xhr, stat, err) {handle_error(xhr, stat, err, pars);},
-        complete:      function(xhr, stat, err) {syslog("Complete " + xhr.status);},
-        statusCode: {
-            404: function() {syslog("page not found 404");}
-            // 404: function(xhr, stat, err) {handle_error(xhr, stat, err, pars)}
-        }
-    }).fail(function() {syslog("ajax call failed");});
+    if ($.jsonp === undefined)
+    {
+        $.ajax({
+            type:        reqtype,
+            url:         "http://" + url,
+            dataType:    'jsonp',
+            crossDomain: true,
+            cache:       true,
+            timeout:     10000,
+            success:     function(data, stat, xhr) {handle_complete(data, stat, xhr, pars);},
+            error:       function(xhr, stat, err) {handle_error(xhr, stat, err, pars);},
+            // complete:      function(xhr, stat) {syslog("Complete " + xhr.status);},
+            statusCode: {
+                404: function(xhr, stat, err) {handle_error(xhr, stat, err, pars)}
+            }
+        });
+    }
+    else
+    {
+        $.jsonp({
+            type:              reqtype,
+            url:               "http://" + url,
+            callbackParameter: "callback",
+            cache:             true,
+            timeout:           10000,
+            success:           function(data, stat, xhr) {handle_complete(data, stat, xhr, pars);},
+            error:             function(xhr, stat, err)  {handle_error(xhr, stat, err, pars);}
+            // complete:          function(xhr, stat) {syslog("Complete " + xhr + " stat=" + stat);},
+        });    
+    }
 } /* get_json_data */
 
 function handle_complete(data, stat, xhr, pars)
 {
-    syslog("handle_complete: data=" + data);
-    syslog("handle_complete: stat=" + stat);
-    syslog("handle_complete: data.errcode=" + data.errorcode);
-    
+    // syslog("handle_complete: data=" + data);
+    syslog("handle_complete: stat=" + stat);    
     syslog("handle_complete: pid=" + data[0].pid);
     for(var hld in data[0].holdings)
     {
@@ -320,13 +392,14 @@ function handle_complete(data, stat, xhr, pars)
 
 function handle_error(xhr, stat, err, pars)
 {
-    syslog("handle_error: err="  + err);
+    // syslog("handle_error: err="  + err);
     syslog("handle_error: stat=" + stat);
-
     var msg = stat;
     if (err !== "") msg += ": " + err;
     if (xhr.status !== 0) msg += " (" + xhr.status + ")";
-    syslog("handle_error: msg=" + msg);
+    syslog("handle_error: msg=" + msg);    
+    syslog("handle_error: pid=" + pars.pid);
+    pars.result(pars, null, null);
 } /* handle_error */
 
 function syslog(msg)
