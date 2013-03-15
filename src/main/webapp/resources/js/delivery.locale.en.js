@@ -1,5 +1,5 @@
 /*
- * Copyright 2011 International Institute of Social History
+ * Copyright 2013 International Institute of Social History
  *
  *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.
@@ -14,3 +14,21 @@
  *    limitations under the License.
  */
 
+var string_table_en = {
+    alert_max:            "Only a reservation of {0} holdings kan be made",
+    alert_noitems:        "No holdings selected for reservation",
+    button_request:       "Request Item",
+    button_permission:    "Request Permission",
+    stat_open_reserved:   "The item is currently reserved by someone else, please contact reading room",
+    stat_open_restricted: "You cannot reserve this item because of restrictions on the archive",
+    stat_restricted:      "You need permission for this item",
+    stat_closed:          "You cannot reserve this item because of restrictions on the archive",
+    stat_closed_embargo:  "You cannot reserve this item until {0} because of restrictions on the archive",
+    cart_title:           "Title",
+    cart_pid:             "Pid/Signature",
+    cart_remove:          "Remove",
+    cart_button_reserve:  "Reserve",
+    cart_button_empty:    "Empty",
+    cart_button_remove:   "X",
+    email_office:         "ask@iisg.nl"
+};

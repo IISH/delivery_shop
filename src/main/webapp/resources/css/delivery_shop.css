@@ -1,70 +1,100 @@
-/* 
-    Document   : delivery_shop
-    Created on : Mar 13, 2013, 4:01:56 PM
-    Author     : geert
-    Description:
-        Purpose of the stylesheet follows.
-*/
+/*
+ * Copyright 2013 International Institute of Social History
+ *
+ *    Licensed under the Apache License, Version 2.0 (the "License");
+ *    you may not use this file except in compliance with the License.
+ *    You may obtain a copy of the License at
+ *
+ *        http://www.apache.org/licenses/LICENSE-2.0
+ *
+ *    Unless required by applicable law or agreed to in writing, software
+ *    distributed under the License is distributed on an "AS IS" BASIS,
+ *    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *    See the License for the specific language governing permissions and
+ *    limitations under the License.
+ */
 
 /*
-    DeliverySop classes
+    DeliveryShop classes
 */
-.delivery_reserve_button
+.deliveryReserveButton
 {
     background-color: lightgreen;
 }
-
+.deliveryPermissionButton
+{
+    background-color: lightblue;
+}
+.deliveryResponseText
+{
+    color: red;
+}
 
 /*
     The simpleCart classes
 */
 .simpleCart_items
 {
-    background-color: yellow;
-    width: 750px;
+    background-color: white;
+    width:            750px;
+    display:          table;
 }
 .simpleCart_items .headerRow
 {
     background-color: lightgray;
+    width:            750px;
+    display:          table-row;
 }
 .simpleCart_items .headerRow .item-name
 {
     font-weight: bold;
     text-align:  left;
+    display:     table-cell;
 }
 .simpleCart_items .headerRow .item-pid
 {
     font-weight: bold;
-    text-align:  center;
+    text-align:  left;
+    display:     none;
+    /* display: table-cell; */
 }
 .simpleCart_items .headerRow .item-remove
 {
     font-weight: bold;
-    font-style:  italic;
     text-align:  right;
-    /* display:     none; */
+    display:     table-cell;
 }
 .simpleCart_items .itemRow
 {
-    background-color: lightskyblue;
+    background-color: lightcyan;
+    width:            750px;
+    display:          table-row;
 }
 .simpleCart_items .itemRow .item-name
 {
+    text-align: left;
+    display:    table-cell;
+}
+.simpleCart_items .itemRow .item-pid
+{
     text-align:  left;
+    display:     none;
+    /* display: table-cell; */
 }
 .simpleCart_items .itemRow .item-remove
 {
-    float:  right;
+    text-align:  right;
+    display:     table-cell;
 }
 .simpleCart_remove
 {
-    background-color: lightsalmon;
+    background-color: lightskyblue;
 }
 .simpleCart_checkout
 {
-    background-color: lightcyan;
+    background-color: lawngreen;
 }
 .simpleCart_empty
 {
-    background-color: lightcyan;
+    background-color: lawngreen;
 }

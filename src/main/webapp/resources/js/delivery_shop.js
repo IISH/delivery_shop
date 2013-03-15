@@ -14,52 +14,25 @@
  *    limitations under the License.
  */
 
-// Todo Stylesheet
-// protype for jquery
-// Taal code in aparte js
-// in cart allen label en remove zichtbaar
-// Pid kan getoond worden
-// Link the cart label naar de search pagina
+// Reserve / Empty knop als cart is empty
+// HTTP 404 code aanpassing (Stefan)
 
 var DeliveryProps = (function() {
-    var host        = "localhost";
+    var host        = "localhost/delivery";
     var language    = "en";
-    var email       = "ask@iisg.nl";
     var max_items   = 3;
+    var search_url  = "http://hdl.handle.net";
     var cart_div    = null;
-    
-    var set_cartdiv = function(div) {
-        var html;
-    
-        html  = "<div class=\"simpleCart_items\"></div>";
-        // html += "<br />" 
-        // html += "Quantity: <span class=\"simpleCart_quantity\"></span><br />";
-        if (language === 'nl')
-        {
-            html += "<input type=\"submit\" class=\"simpleCart_checkout\" value=\"Reserveer\" name=\"Reserve\" onclick=\"javascript:;\" />";
-            html += "&nbsp;";
-            html += "<input type=\"submit\" class=\"simpleCart_empty\" value=\"Leeg\" name=\"Empty\" onclick=\"javascript:;\" />";
-        }
-        else
-        {
-            html += "<input type=\"submit\" class=\"simpleCart_checkout\" value=\"Reserve\" name=\"Reserve\" onclick=\"javascript:;\" />";
-            html += "&nbsp;";
-            html += "<input type=\"submit\" class=\"simpleCart_empty\" value=\"Empty\" name=\"Empty\" onclick=\"javascript:;\" />";
-        }
-        html += "<br />";
-        $(div).html(html);
-        cart_div = div;
-    }; /* set_cartdiv */
 
     return {
         setProperties: function(props) {
             if (!!props)
             {
-                if (!!props.host)      host      = props.host;
-                if (!!props.language)  language  = props.language;
-                if (!!props.email)     email     = props.email;
-                if (!!props.max_items) max_items = props.max_items;
-                if (!!props.cart_div)  set_cartdiv(props.cart_div);
+                if (!!props.host)       host       = props.host;
+                if (!!props.language)   language   = props.language;
+                if (!!props.max_items)  max_items  = props.max_items;
+                if (!!props.search_url) search_url = props.search_url;
+                if (!!props.cart_div)   cart_div   = props.cart_div;
             }
         },
         getDeliveryHost: function() {
@@ -68,11 +41,11 @@ var DeliveryProps = (function() {
         getLanguage: function() {
             return(language);
         },
-        getOfficeEmail: function() {
-            return(email);
-        },
         getMaxItems: function() {
             return(max_items);
+        },
+        getSearchURL: function() {
+            return(search_url);
         },
         getShoppingCartDiv: function() {
             return(cart_div);
@@ -80,74 +53,134 @@ var DeliveryProps = (function() {
     };
 }());
 
+var Rsrc = (function() {
+    var language  = 'en';
+    var str_table = null;
+    
+    return {
+        setLanguage: function(lang) {
+            /*
+            var url = "resources/js/delivery.locale." + lang + ".js";
+            $.getScript(url, function(data, textStatus, jqxhr) {
+                if (jqxhr.status === 200)
+                {
+                    eval(data);
+                    str_table = string_table;
+                    language  = lang;
+                }              
+                syslog("Load was performed with "  + textStatus + " " + jqxhr.status);
+            });
+            */
+           switch (lang)
+           {
+               case 'nl':
+                   str_table = string_table_nl;
+                   break;
+               case 'en':
+               default:
+                   str_table = string_table_en;
+                   break;
+           }
+        },
+        getString: function(key, par)
+        {   
+            var str;
+            
+            if (!!str_table)
+            {
+                str = str_table[key];
+                if (!!par) str = str.replace("{0}", par);
+                return(str);
+            }
+            return("TBS");
+        }
+    }
+}());
+
+
+// Public functions
+
 /**
  * Initialize the Delivery API
  *
  * @param object props     the delivery access properties
  * @return void
  */
-function initDelivery(props)
-{
-    jQuery.support.cors = true;
-    
-    if (!!props) DeliveryProps.setProperties(props);
-    syslog("Use delivery host: " + DeliveryProps.getDeliveryHost());
-    
-    simpleCart({
-        // array representing the format and columns of the cart
-        cartColumns: [
-            { attr: "name",     label: "Title"},
-            { attr: "pid",      label: "Pid/Signature"},
-            // { attr: "quantity",  label: false},
-            { view: "remove",    label: "Remove"}
-        ],
-        // "div" or "table"
-        cartStyle: "div", 
-        // how simpleCart should checkout
-        checkout: { 
-            type: "SendForm", 
-            url:  "javascript:sendReservation();" 
-        },
-        currency: "EUR"
-    });
-} /* initDelivery */
-
-function getDeliveryInfo(resultfld)
+function initDelivery(props) 
 {
     var html;
-    
-    html  = "<i>";
-    html += "host=" + DeliveryProps.getDeliveryHost();
-    html += " ";
-    html += "lang=" + DeliveryProps.getLanguage();
-    html += "</i>";
-    $(resultfld).html(html);
-} /* getDeliveryInfo */
 
-function determineReservationButton(label, pid, signature, directflag, resultfld) 
-{
-    var pars = { 
-        label:     label, 
-        pid:       $.trim(pid), 
-        signature: $.trim(signature), 
-        direct:    directflag, 
-        field:     resultfld, 
-        result:    button_callback 
-    };
-    get_json_data("GET", "delivery/record/" + encodeURIComponent(pars.pid), pars);
-} /* determineReservationButton */
+    if (!!props) DeliveryProps.setProperties(props);
+    syslog("Use delivery host: " + DeliveryProps.getDeliveryHost());
+    Rsrc.setLanguage(DeliveryProps.getLanguage());
 
-function getRecordInfo(pid, signature, resultfld) 
-{
-    var pars = {
-        pid:       $.trim(pid),
-        signature: $.trim(signature),
-        field:     resultfld,
-        result:    record_callback
-    };
-    get_json_data("GET", "delivery/record/" + encodeURIComponent(pars.pid), pars);
-    $(resultfld).html("Request: pid=" + pars.pid + " signature=" + pars.signature);
-} /* getRecordInfo */
+    if (DeliveryProps.getShoppingCartDiv() !== null)
+    {
+        simpleCart({
+            // array representing the format and columns of the cart
+            cartColumns: [
+                { attr: "name",   label: Rsrc.getString('cart_title')},
+                { attr: "pid",    label: Rsrc.getString('cart_pid')},
+                { view: "remove", label: Rsrc.getString('cart_remove'), text: Rsrc.getString('cart_button_remove')}
+            ],
+            // "div" or "table"
+            cartStyle: "div", 
+            // how simpleCart should checkout
+            checkout: { 
+                type: "SendForm", 
+                url:  "javascript:sendReservation();" 
+            },
+            currency: "EUR"
+        });
+
+        html  = "<div class=\"simpleCart_items\"></div>";
+        html += "<input type=\"submit\" class=\"simpleCart_checkout\" value=\"";
+        html += Rsrc.getString('cart_button_reserve');
+        html += "\" name=\"Reserve\" onclick=\"javascript:;\" />";
+        html += "&nbsp;";
+        html += "<input type=\"submit\" class=\"simpleCart_empty\" value=\"";
+        html += Rsrc.getString('cart_button_empty');
+        html += "\" name=\"Empty\" onclick=\"javascript:;\" />";
+        html += "<br />";
+        $(DeliveryProps.getShoppingCartDiv()).html(html);
+    }
+} /* initDelivery */
+
+(function($) {
+    $.fn.getDeliveryInfo = function() {
+        var html;
+
+        html  = "<i>";
+        html += "host=" + DeliveryProps.getDeliveryHost();
+        html += " ";
+        html += "lang=" + DeliveryProps.getLanguage();
+        html += "</i>";
+        $(this).html(html);
+    } /* getDeliveryInfo */
+
+    $.fn.determineReservationButton = function(label, pid, signature, directflag) {
+        var pars = { 
+            label:     label, 
+            pid:       $.trim(pid), 
+            signature: $.trim(signature), 
+            direct:    directflag, 
+            field:     $(this), 
+            result:    button_callback 
+        };
+        get_json_data("GET", "record/" + encodeURIComponent(pars.pid), pars);
+    } /* determineReservationButton */
+
+    $.fn.getRecordInfo = function(pid, signature) {
+        var pars = {
+            pid:       $.trim(pid),
+            signature: $.trim(signature),
+            field:     $(this),
+            result:    record_callback
+        };
+        get_json_data("GET", "record/" + encodeURIComponent(pars.pid), pars);
+        $(this).html("Request: pid=" + pars.pid + " signature=" + pars.signature);
+    } /* getRecordInfo */
+})(jQuery);
 
 function requestReservation(label, pid, signature, direct)
 {
@@ -161,21 +194,15 @@ function requestReservation(label, pid, signature, direct)
     {
         if (DeliveryProps.getShoppingCartDiv() !== null)
         {
-            if (simpleCart.find({ name: item }).length === 0)
+            if (simpleCart.find({ pid: item }).length === 0)
             {
                 if (simpleCart.quantity() >= DeliveryProps.getMaxItems())
                 {
-                    if (DeliveryProps.getLanguage() === 'nl')
-                    {
-                        alert("U kunt maximaal " + DeliveryProps.getMaxItems() + " objecten reserveren");
-                    }
-                    else
-                    {
-                        alert("Only a reservation of " + DeliveryProps.getMaxItems() + " holdings kan be made");
-                    }
+                    alert(Rsrc.getString('alert_max', DeliveryProps.getMaxItems()));
                 }
                 else
-                {
+                {   
+                    label = "<a href=\"" + DeliveryProps.getSearchURL() + "/" + encodeURIComponent(pid) + "\">" + label + "</a>";
                     simpleCart.add({ 
                         name:     label,
                         pid:      item,
@@ -199,23 +226,23 @@ function sendReservation()
     {
         simpleCart.each(function(item, x) {
             if (pids.length > 0) pids += ",";
-            pids += item.get('name');
+            pids += item.get('pid');
         });
         show_delivery_page(pids);
         simpleCart.empty();
     }
     else
     {
-        if (DeliveryProps.getLanguage() === 'nl')
-        {
-            alert("Geen objecten geselecteerd om te reserveren");
-        }
-        else
-        {
-            alert("No holdings selected for reservation");
-        }
+        alert(Rsrc.getString('alert_noitems'));
     }
 } /* sendReservation */
+
+function requestPermission(pid, signature)
+{
+    var item = pid + ":" + signature;
+    
+    show_permission_page(item);
+} /* requestPermission */
 
 // Local functions
 
@@ -223,13 +250,14 @@ function button_callback(pars, data, holding)
 {
     var html;
     
-    syslog("button_callback: field=" + pars.field);
+    syslog("button_callback: field=" + pars.field + " data=" + data);
     if (data === null)
     {
         // Holding is not found in Delivery
         data = {
             pid:             pars.pid,
             title:           pars.pid,
+            // embargo:         "2013-03-20",
             restrictionType: 'OPEN',
             holdings: [
                 {
@@ -247,15 +275,8 @@ function button_callback(pars, data, holding)
         {
             if (holding.status === 'AVAILABLE')
             {
-                html = "<input type=\"submit\" class=\"delivery_reserve_button\" value=\"";
-                if (DeliveryProps.getLanguage() === 'nl')
-                {
-                    html += "Reserveer Item";
-                }
-                else
-                {
-                    html += "Request Item";
-                }
+                html  = "<input type=\"submit\" class=\"deliveryReserveButton\" value=\"";
+                html += Rsrc.getString('button_request');
                 html += "\" name=\"RequestItem\" onclick=\"requestReservation('";
                 if (pars.label === null)
                 {
@@ -275,54 +296,50 @@ function button_callback(pars, data, holding)
             }
             else
             {
-                if (DeliveryProps.getLanguage() === 'nl')
-                {
-                    html = "Dit item is op momenteel gereserveerd door iemand anders, neem contact op met de leeskamer ";
-                }
-                else
-                {
-                    html = "The item is currently reserved by someone else, please contact reading room ";
-                }
+                html  = "<span class=\"deliveryResponseText\">";
+                html += Rsrc.getString('stat_open_reserved');
+                html += " ";
                 html += "<a href=\"mailto:";
-                html += DeliveryProps.getOfficeEmail();
+                html += Rsrc.getString('email_office');
                 html += "\">";
-                html += DeliveryProps.getOfficeEmail();
-                html += "</a>";
+                html += Rsrc.getString('email_office');
+                html += "</a>.";
+                html += "</span>";
             }
         }
         else
         {
-            if (DeliveryProps.getLanguage() === 'nl')
-            {
-                html = "U kunt dit item niet reserveren i.v.m. beperkingen op dit archief";
-            }
-            else
-            {
-                html = "You cannot reserve this item because of restrictions on the archive";
-            }
+            html  = "<span class=\"deliveryResponseText\">";
+            html += Rsrc.getString('stat_open_restricted');
+            html += ".</span>";
         }
     }
     else if (data.restrictionType === 'RESTRICTED')
     {
-        if (DeliveryProps.getLanguage() === 'nl')
-        {
-            html = "Item is restricted";
-        }
-        else
-        {
-            html = "Item is restricted";
-        }
+        html  = "<span class=\"deliveryResponseText\">";
+        html += Rsrc.getString('stat_restricted');
+        html += " ";
+        html += " <input type=\"submit\" class=\"deliveryPermissionButton\" value=\"";
+        html += Rsrc.getString('button_permission');
+        html += "\" name=\"RequestItem\" onclick=\"requestReservation('";
+        html += pars.pid;
+        html += "', '";
+        html += pars.signature;
+        html += ");\" />";
+        html += "</span>";
     }
     else // CLOSED
     {
-        if (DeliveryProps.getLanguage() === 'nl')
+        html = "<span class=\"deliveryResponseText\">";
+        if (!!data.embargo)
         {
-            html = "U kunt dit item niet reserveren i.v.m. beperkingen op dit archief";
+            html += Rsrc.getString('stat_closed_embargo', data.embargo);
         }
         else
         {
-            html = "You cannot reserve this item because of restrictions on the archive";
+            html += Rsrc.getString('stat_closed');
         }
+        html += "</span>";
     }
     $(pars.field).html(html);
 } /* button_callback */
@@ -344,6 +361,7 @@ function record_callback(pars, data, holding)
         rec += "pid=" + data.pid + "<br />";
         rec += "signature=" + holding.signature + "<br />";
         rec += "title=" + data.title + "<br />";
+        if (!!data.embargo) rec += "embargo=" + data.embargo + "<br />";
         rec += "restrictionType=" + data.restrictionType + "<br />";
         rec += "usageRestriction=" + holding.usageRestriction + "<br />";
         rec += "status=" + holding.status + "<br />";        
@@ -357,12 +375,24 @@ function show_delivery_page(pids)
     var url;
     
     url  = "http://" + DeliveryProps.getDeliveryHost();
-    url += "/delivery/reservation/createform/";
+    url += "/reservation/createform/";
     url += encodeURIComponent(pids);
     url += "?locale=" + DeliveryProps.getLanguage();
     // window.location = url;
     window.open(url);
 } /* show_delivery_page */
+
+function show_permission_page(pids)
+{
+    var url;
+    
+    url  = "http://" + DeliveryProps.getDeliveryHost();
+    url += "/permission/createform/";
+    url += encodeURIComponent(pids);
+    url += "?locale=" + DeliveryProps.getLanguage();
+    // window.location = url;
+    window.open(url);
+} /* show_permission_page */
 
 function get_json_data(reqtype, url, pars)
 {

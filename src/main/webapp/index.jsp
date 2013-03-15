@@ -13,38 +13,39 @@
         <script type="text/javascript" charset="utf-8" src="resources/js/jquery-1.5.1.min.js"></script>
 		<script type="text/javascript" charset="utf-8" src="resources/js/jquery.jsonp.js"></script>
 		<script type="text/javascript" charset="utf-8" src="resources/js/simpleCart.min.js"></script>
+		<script type="text/javascript" charset="utf-8" src="resources/js/delivery.locale.nl.js"></script>
+		<script type="text/javascript" charset="utf-8" src="resources/js/delivery.locale.en.js"></script>
 		<script type="text/javascript" charset="utf-8" src="resources/js/delivery_shop.js"></script>
 		<script type="text/javascript" charset="utf-8">
             $(document).ready(function()
             {
                 initDelivery({ 
-                    host:      "localhost:8080",
-                    language:  "en",
-                    email:     "ask@iisg.nl",
-                    max_items: 3,
+                    host:      "localhost:8080/delivery",
+                    language:  "nl",
+                    max_items: 2,
                     cart_div:  "#delivery_cart"
                 });
-                getDeliveryInfo("#delivery_info");     // For debugging
+                $("#delivery_info").getDeliveryInfo();     // For debugging
                 
                 setButtons();
             });  /* ready */
             
             function setButtons()
             {
-                getRecordInfo("10622/03D5FEE7-F079-4A5C-A85E-5D22C251933C", "BG C37/328", "#delivery_test1");   // For debugging
-                getRecordInfo("10622/816FC0F9-C941-46E6-86DB-3A66D253D398", "110/61",     "#delivery_test2");   // For debugging
-                getRecordInfo("10622/6D8399C0-A2A0-4537-A380-9AE6CF0D05BD", "PM 10546",   "#delivery_test3");   // For debugging                
+                $("#delivery_test1").getRecordInfo("10622/03D5FEE7-F079-4A5C-A85E-5D22C251933C", "BG C37/328"); // For debugging
+                $("#delivery_test2").getRecordInfo("10622/816FC0F9-C941-46E6-86DB-3A66D253D398", "110/61");     // For debugging
+                $("#delivery_test3").getRecordInfo("10622/6D8399C0-A2A0-4537-A380-9AE6CF0D05BD", "PM 10546");    // For debugging                
                 
-                determineReservationButton("Label1", "10622/03D5FEE7-F079-4A5C-A85E-5D22C251933C", "BG C37/328", false, "#delivery_button1");
-                determineReservationButton("Regel2", "10622/816FC0F9-C941-46E6-86DB-3A66D253D398", "110/61",     false, "#delivery_button2");
-                determineReservationButton(null,  "10622/6D8399C0-A2A0-4537-A380-9AE6CF0D05BD", "PM 10546",   false, "#delivery_button3");                
+                $("#delivery_button1").determineReservationButton("Info about Den Uyl",   "10622/03D5FEE7-F079-4A5C-A85E-5D22C251933C", "BG C37/328", false);
+                $("#delivery_button2").determineReservationButton("Test the second item", "10622/816FC0F9-C941-46E6-86DB-3A66D253D398", "110/61",     false);
+                $("#delivery_button3").determineReservationButton(null,                   "10622/6D8399C0-A2A0-4537-A380-9AE6CF0D05BD", "PM 10546",   false);                
             } /* setButtons */
             
             function getHolding()
             {
-                getRecordInfo($("#pid").val(), $("#signature").val(), "#delivery_test4");   // For debugging
+                $("#delivery_test4").getRecordInfo($("#pid").val(), $("#signature").val());   // For debugging
                 
-                determineReservationButton($("#pid").val(), $("#signature").val(), false, "#delivery_button4");
+                $("#delivery_button4").determineReservationButton(null, $("#pid").val(), $("#signature").val(), false);
             } /* getHolding */
         </script>
     </head>

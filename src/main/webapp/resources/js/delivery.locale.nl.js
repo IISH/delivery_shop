@@ -1,5 +1,5 @@
 /*
- * Copyright 2011 International Institute of Social History
+ * Copyright 2013 International Institute of Social History
  *
  *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.
@@ -14,24 +14,27 @@
  *    limitations under the License.
  */
 
-$(document).ready(function(){
-    $.datepicker.regional['nl'] = {
-            closeText: 'Sluiten',
-            prevText: '←',
-            nextText: '→',
-            currentText: 'Vandaag',
-            monthNames: ['januari', 'februari', 'maart', 'april', 'mei', 'juni',
-            'juli', 'augustus', 'september', 'oktober', 'november', 'december'],
-            monthNamesShort: ['jan', 'feb', 'maa', 'apr', 'mei', 'jun',
-            'jul', 'aug', 'sep', 'okt', 'nov', 'dec'],
-            dayNames: ['zondag', 'maandag', 'dinsdag', 'woensdag', 'donderdag', 'vrijdag', 'zaterdag'],
-            dayNamesShort: ['zon', 'maa', 'din', 'woe', 'don', 'vri', 'zat'],
-            dayNamesMin: ['zo', 'ma', 'di', 'wo', 'do', 'vr', 'za'],
-            weekHeader: 'Wk',
-            dateFormat: 'dd-mm-yy',
-            firstDay: 1,
-            isRTL: false,
-            showMonthAfterYear: false,
-            yearSuffix: ''};
-    $.datepicker.setDefaults($.datepicker.regional['nl']);
-});
+var string_table_nl = {
+    alert_max:            "U kunt maximaal {0} objecten reserveren",
+    alert_noitems:        "Geen objecten geselecteerd om te reserveren",
+    button_request:       "Reserveer Item",
+    button_permission:    "Vraag Toestemming",
+    stat_open_reserved:   "Dit item is momenteel gereserveerd door iemand anders, neem contact op met de leeskamer",
+    stat_open_restricted: "U kunt dit item niet reserveren i.v.m. beperkingen op dit archief",
+    stat_restricted:      "U heeft toestemming nodig voor dit item",
+    stat_closed:          "U kunt dit item niet reserveren i.v.m. beperkingen op dit archief",
+    stat_closed_embargo:  "U kunt dit item t/m {0} niet reserveren i.v.m. beperkingen op dit archief",
+    cart_title:           "Titel",
+    cart_pid:             "Pid/Signature",
+    cart_remove:          "Remove",
+    cart_button_reserve:  "Reserveer",
+    cart_button_empty:    "Leeg",
+    cart_button_remove:   "X",
+    email_office:         "ask@iisg.nl"
+};
+
+
+
+
+
+
