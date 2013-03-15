@@ -11,6 +11,7 @@
         <link rel="stylesheet" media="all" href="resources/css/delivery_shop.css"/>
         
         <script type="text/javascript" charset="utf-8" src="resources/js/jquery-1.5.1.min.js"></script>
+        <script type="text/javascript" charset="utf-8" src="resources/js/jquery-ui-1.8.13.custom.min.js"></script>
 		<script type="text/javascript" charset="utf-8" src="resources/js/jquery.jsonp.js"></script>
 		<script type="text/javascript" charset="utf-8" src="resources/js/simpleCart.min.js"></script>
 		<script type="text/javascript" charset="utf-8" src="resources/js/delivery.locale.nl.js"></script>
@@ -26,6 +27,7 @@
                     cart_div:  "#delivery_cart"
                 });
                 $("#delivery_info").getDeliveryInfo();     // For debugging
+                // $("#delivery_cart").emptyShoppingCart();
                 
                 setButtons();
             });  /* ready */

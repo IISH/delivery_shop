@@ -24,11 +24,13 @@ var string_table_en = {
     stat_restricted:      "You need permission for this item",
     stat_closed:          "You cannot reserve this item because of restrictions on the archive",
     stat_closed_embargo:  "You cannot reserve this item until {0} because of restrictions on the archive",
+    stat_notfound:        "Item not found",
     cart_title:           "Title",
     cart_pid:             "Pid/Signature",
     cart_remove:          "Remove",
     cart_button_reserve:  "Reserve",
     cart_button_empty:    "Empty",
     cart_button_remove:   "X",
+    date_format:          "dd/mm/yy",
     email_office:         "ask@iisg.nl"
 };

@@ -24,12 +24,14 @@ var string_table_nl = {
     stat_restricted:      "U heeft toestemming nodig voor dit item",
     stat_closed:          "U kunt dit item niet reserveren i.v.m. beperkingen op dit archief",
     stat_closed_embargo:  "U kunt dit item t/m {0} niet reserveren i.v.m. beperkingen op dit archief",
+    stat_notfound:        "Item niet gevonden",
     cart_title:           "Titel",
     cart_pid:             "Pid/Signature",
     cart_remove:          "Remove",
     cart_button_reserve:  "Reserveer",
     cart_button_empty:    "Leeg",
     cart_button_remove:   "X",
+    date_format:          "dd-mm-yy",
     email_office:         "ask@iisg.nl"
 };
 
