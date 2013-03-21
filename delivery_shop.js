@@ -129,7 +129,7 @@ function initDelivery(props)
     var html;
 
     if (!!props) DeliveryProps.setProperties(props);
-    syslog("Use delivery host: " + DeliveryProps.getDeliveryHost());
+    syslog("Use delivery host: " + DeliveryProps.getDeliveryHost());
     Rsrc.setLanguage(DeliveryProps.getLanguage());
 
     if (DeliveryProps.getShoppingCartDiv() !== null)
@@ -325,7 +325,7 @@ function button_callback(pars, data, holding)
 {
     var html;
     
-    syslog("button_callback: field=" + pars.field + " data=" + data);
+    syslog("button_callback: field=" + pars.field + " data=" + data);
     if (data === null)
     {
         // Holding is not found in Delivery
@@ -432,7 +432,7 @@ function record_callback(pars, data, holding)
 {
     var rec;
     
-    syslog("record_callback: field=" + pars.field);
+    syslog("record_callback: field=" + pars.field);
     rec  = "<i>Response:<br />";
     if (data === null)
     {
@@ -537,7 +537,7 @@ function get_json_data(reqtype, url, pars)
 function handle_complete(data, stat, xhr, pars)
 {
     syslog("handle_complete: stat=" + stat);    
-    syslog("handle_complete: pid=" + data[0].pid);
+    syslog("handle_complete: pid=" + data[0].pid);
     for(var hld in data[0].holdings)
     {
         if (pars.pid === data[0].pid && pars.signature === data[0].holdings[hld].signature)
@@ -554,7 +554,7 @@ function handle_error(xhr, stat, err, pars)
     if (err !== "") msg += ": " + err;
     if (xhr.status !== 0) msg += " (" + xhr.status + ")";
     syslog("handle_error: msg=" + msg);    
-    syslog("handle_error: pid=" + pars.pid);
+    syslog("handle_error: pid=" + pars.pid);
     pars.error = stat;
     pars.result(pars, null, null);
 } /* handle_error */
