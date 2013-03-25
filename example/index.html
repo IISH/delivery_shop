@@ -18,7 +18,7 @@
             $(document).ready(function()
             {
                 initDelivery({ 
-                    host:      "localhost",
+                    host:      "node-120.dev.socialhistoryservices.org",
                     language:  "nl",
                     max_items: 2,
                     cart_div:  "#delivery_cart"
@@ -34,10 +34,12 @@
                 $("#delivery_test1").getRecordInfo("10622/03D5FEE7-F079-4A5C-A85E-5D22C251933C", "BG C37/328"); // For debugging
                 $("#delivery_test2").getRecordInfo("10622/816FC0F9-C941-46E6-86DB-3A66D253D398", "110/61");     // For debugging
                 $("#delivery_test3").getRecordInfo("10622/6D8399C0-A2A0-4537-A380-9AE6CF0D05BD", "PM 10546");    // For debugging                
+
                 
                 $("#delivery_button1").determineReservationButton("Info about Den Uyl",   "10622/03D5FEE7-F079-4A5C-A85E-5D22C251933C", "BG C37/328", false);
                 $("#delivery_button2").determineReservationButton("Test the second item", "10622/816FC0F9-C941-46E6-86DB-3A66D253D398", "110/61",     false);
                 $("#delivery_button3").determineReservationButton(null,                   "10622/6D8399C0-A2A0-4537-A380-9AE6CF0D05BD", "PM 10546",   false);                
+
             } /* setButtons */
             
             function getHolding()

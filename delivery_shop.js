@@ -159,13 +159,17 @@ function initDelivery(props)
 
         html  = "<div class=\"simpleCart_items\"></div>";
         html += "<div id=\"deliveryCartButtons\">";
-        html += "<input type=\"submit\" class=\"simpleCart_checkout\" value=\"";
+        html += "<button type=\"submit\" class=\"simpleCart_checkout\" value=\"";
         html += Rsrc.getString('cart_button_reserve');
-        html += "\" name=\"Reserve\" onclick=\"javascript:;\" />";
+        html += "\" name=\"Reserve\" onclick=\"javascript:;\" >";
+        html += Rsrc.getString('cart_button_reserve');
+        html += "<\/button>";
         html += "&nbsp;";
-        html += "<input type=\"submit\" class=\"simpleCart_empty\" value=\"";
+        html += "<button type=\"submit\" class=\"simpleCart_empty\" value=\"";
         html += Rsrc.getString('cart_button_empty');
-        html += "\" name=\"Empty\" onclick=\"javascript:;\" />";
+        html += "\" name=\"Empty\" onclick=\"javascript:;\" >";
+        html += Rsrc.getString('cart_button_empty');
+        html += "<\/button>";
         html += "</div>";
         $(DeliveryProps.getShoppingCartDiv()).html(html);
     }
@@ -358,7 +362,7 @@ function button_callback(pars, data, holding)
             {
                 if (holding.status === 'AVAILABLE')
                 {
-                    html  = "<input type=\"submit\" class=\"deliveryReserveButton\" value=\"";
+                    html  = "<button type=\"submit\" class=\"deliveryReserveButton\" value=\"";
                     html += Rsrc.getString('button_request');
                     html += "\" name=\"RequestItem\" onclick=\"requestReservation('";
                     if (pars.label === null)
@@ -375,7 +379,9 @@ function button_callback(pars, data, holding)
                     html += pars.signature;
                     html += "', ";
                     html += pars.direct;
-                    html += ");\" />";
+                    html += ");\" >";
+                    html += Rsrc.getString('button_request');
+                    html += "<\/button>";
                 }
                 else
                 {
@@ -402,13 +408,15 @@ function button_callback(pars, data, holding)
             html  = "<span class=\"deliveryResponseText\">";
             html += Rsrc.getString('stat_restricted');
             html += " ";
-            html += " <input type=\"submit\" class=\"deliveryPermissionButton\" value=\"";
+            html += " <button type=\"submit\" class=\"deliveryPermissionButton\" value=\"";
             html += Rsrc.getString('button_permission');
             html += "\" name=\"RequestItem\" onclick=\"requestReservation('";
             html += pars.pid;
             html += "', '";
             html += pars.signature;
-            html += ");\" />";
+            html += ");\" >";
+            html += Rsrc.getString('button_request');
+            html += "<\/button>";
             html += ".</span>";
         }
         else // CLOSED
