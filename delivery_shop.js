@@ -24,6 +24,9 @@ var DeliveryProps = (function() {
     var url_search       = "http://hdl.handle.net";
     var cart_div         = null;
     var showhide_buttons = true;
+    var onLoad = function() {};
+    var onUpdate = function() {};
+    var cartStyle = "table";
 
     return {
         setProperties: function(props) {
@@ -35,6 +38,9 @@ var DeliveryProps = (function() {
                 if (!!props.max_items)        max_items        = props.max_items;
                 if (!!props.url_search)       url_search       = props.url_search;
                 if (!!props.cart_div)         cart_div         = props.cart_div;
+                if (!!props.cartStyle)        cartStyle        = props.cartStyle;
+                if (!!props.onLoad && typeof(props.onLoad) === 'function')        onLoad = props.onLoad;
+                if (!!props.onUpdate && typeof(props.onUpdate) === 'function')        onUpdate = props.onUpdate;
             }
         },
         getDeliveryHost: function() {
@@ -54,7 +60,18 @@ var DeliveryProps = (function() {
         },
         getShowHideButtons: function() {
             return(showhide_buttons);
+        },
+        getLoadFunction: function() {
+            return onLoad;
+        },
+        getUpdateFunction: function() {
+            return onUpdate;
+        },
+        getCartStyle: function() {
+            return cartStyle;
         }
+        
+        
     };
 })();
 
@@ -142,7 +159,7 @@ function initDelivery(props)
                 { view: "remove", label: Rsrc.getString('cart_remove'), text: Rsrc.getString('cart_button_remove')}
             ],
             // "div" or "table"
-            cartStyle: "div", 
+            cartStyle: DeliveryProps.getCartStyle(), 
             // how simpleCart should checkout
             checkout: { 
                 type: "SendForm", 
@@ -150,9 +167,14 @@ function initDelivery(props)
             },
             load: function() {
                 show_hide_cart_buttons();
+                // Call custom load function.
+                DeliveryProps.getLoadFunction()();
+                
             },
             update: function() {
                 show_hide_cart_buttons();
+                // Call Custom update function.
+                DeliveryProps.getUpdateFunction()();
             },
             currency: "EUR"
         });
@@ -385,7 +407,7 @@ function button_callback(pars, data, holding)
                 }
                 else
                 {
-                    html  = "<span class=\"deliveryResponseText\">";
+                    html  = "<span class=\"deliveryResponseText deliveryStatReserved\">";
                     html += Rsrc.getString('stat_open_reserved');
                     html += " ";
                     html += "<a href=\"mailto:";
@@ -398,14 +420,14 @@ function button_callback(pars, data, holding)
             }
             else
             {
-                html  = "<span class=\"deliveryResponseText\">";
+                html  = "<span class=\"deliveryResponseText deliveryStatUsageRestriction\">";
                 html += Rsrc.getString('stat_open_restricted');
                 html += ".</span>";
             }
         }
         else if (data.restrictionType === 'RESTRICTED')
         {
-            html  = "<span class=\"deliveryResponseText\">";
+            html  = "<span class=\"deliveryResponseText deliveryStatRestricted\">";
             html += Rsrc.getString('stat_restricted');
             html += " ";
             html += " <button type=\"submit\" class=\"deliveryPermissionButton\" value=\"";
@@ -421,7 +443,7 @@ function button_callback(pars, data, holding)
         }
         else // CLOSED
         {
-            html = "<span class=\"deliveryResponseText\">";
+            html = "<span class=\"deliveryResponseText deliveryStatClosed\">";
             if (!!data.embargo)
             {
                 html += Rsrc.getString('stat_closed_embargo', formatted_date(data.embargo));
