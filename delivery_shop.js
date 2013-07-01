@@ -271,7 +271,7 @@ function initDelivery(props)
  */
 function requestReservation(label, pid, signature, direct)
 {
-    var item = pid + ":" + signature;
+    var item = pid + "^" + signature;
     
     if (direct === true)
     {
@@ -340,7 +340,7 @@ function sendReservation()
  */
 function requestPermission(pid, signature)
 {
-    var item = pid + ":" + signature;
+    var item = pid + "^" + signature;
     
     show_permission_page(item);
 } /* requestPermission */
